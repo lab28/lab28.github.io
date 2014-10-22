@@ -1,6 +1,6 @@
 ---
 layout: post
-title: JavaScript上下文、作用域和闭包
+title: JavaScript作用域和闭包
 ---
 
 ###上下文和作用域
