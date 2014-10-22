@@ -10,13 +10,13 @@ url:         "/"
 google_analytics:
 
 # Optional features
-animated:           false
+animated:           true
 show_related_posts: false
 show_post_footers:  false
 
 # Social icons
-show_social_icons: false
-github_username:
+show_social_icons: true
+github_username:   lab28
 twitter_username:
 google_plus_id:
 linkedin_username:
@@ -25,8 +25,8 @@ paypal_url:
 flattr_button:
 
 # Build settings
-markdown:     kramdown
-permalink:    pretty
-paginate:     3
-sass:
-  compressed: true
+markdown:          redcarpet
+permalink:         pretty
+paginate:          6
+compressed:        true
+excerpt_separator: <!--more--> 

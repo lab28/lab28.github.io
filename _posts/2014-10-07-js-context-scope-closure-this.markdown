@@ -9,19 +9,21 @@ title: JavaScript上下文、作用域和闭包
 
 JavaScript中的函数实际上都是对象，而每个函数对象都有一个[[scope]]属性，JavaScript是通过这个属性来访问`作用域链条(scope chain)`的。
 
+<!--more-->
+
 当我们创建一个函数对象时(即定义一个函数时)，函数对象内部的[[scope]]属性会**指向函数定义所在上下文的作用域链条**。而当这个函数被调用执行时，会创建一个新的执行上下文，这个上下文代表一个局部作用域，这个局部作用域也会被添加到[[scope]]所指向的作用域链条上。
 
 例如，如果在全局上下文中定义一个函数，那么这个函数对象的[[scope]]属性会指向全局上下文的作用域链条，而这个作用域链条只包含一个全局对象。
 
-{% highlight javascript %}
+````javascript
 function exampleFunction(formalParameter){
     ...   // function body code
 }
-{% endhighlight %}
+````
 
 而如果在一个函数内部定义另一个函数，那么内部函数就被定义在了外部函数的执行上下文中。
  
-{% highlight javascript %}
+````javascript
 function exampleOuterFunction(formalParameter){
     function exampleInnerFuncitonDec(){
         ... // inner function body
@@ -30,13 +32,13 @@ function exampleOuterFunction(formalParameter){
 }
 
 exampleOuterFunction( 5 );
-{% endhighlight %}
+````
 
 这里exampleOuterFunction定义在全局上下文中，所以其[[scope]]属性指向仅包含全局对象的作用域链条。 而当exampleOuterFunction被执行时，会创建一个新的执行上下文，这个执行上下文的作用域包含了局部作用域以及exampleOuterFunction的[[scope]]属性所指向的作用域链条(仅包含全局对象)。内部函数exampleInnerFunctionDec的[[scope]]属性指向的作用域链条和这个执行上下文的作用域相同，包含了exampleOuterFunction的局部作用域以及全局作用域。
 
 通过with表达式，我们能够改变作用域。
 
-{% highlight javascript %}
+````javascript
 // 创建全局变量y，指向一个对象
 var y = {x:5}; // object literal with an - x - property
 
@@ -53,7 +55,7 @@ function exampleFuncWith(){
 }
 
 exampleFuncWith();
-{% endhighlight %}
+````
 
 with语句结束之后，作用域链条会回复原状，不过with语句内定义的函数其[[scope]]属性中已经多了一个全局对象y，并且y在链条的最前端。
 
@@ -67,7 +69,7 @@ JavaScript在判定一个标识符的时候，会沿作用域链条向上爬，�
 
 一般来说，在退出一个执行上下文之后，该执行上下文中的对象和函数对象就无法在外部访问了，所以可以对其进行垃圾回收。 但闭包能避免这一点。要构造一个闭包，可以在退出一个执行上下文时，将内部定义的一个函数对象作为返回值返回，或将其赋给一个全局变量，或者一个全局对象或参数对象的某个属性。
 
-{% highlight javascript %}
+````javascript
 function exampleClosureForm(arg1, arg2){
     var localVar = 8;
     function exampleReturned(innerArg){
@@ -78,7 +80,7 @@ function exampleClosureForm(arg1, arg2){
 }
 
 var globalVar = exampleClosureForm(2, 4);
-{% endhighlight %}
+````
 
 现在内部函数exampleReturned就不会被垃圾回收了，因为他被赋给了全局变量globalVar，所以仍然可以访问到。 而更重要的是由于[[scope]]属性的存在，exampleReturned函数的作用域链条上的所有对象都不会被垃圾回收了。这样我们在外部就仍能访问到localVar、arg1以及arg2了。
 
@@ -90,14 +92,14 @@ var globalVar = exampleClosureForm(2, 4);
 
 此时this和传统oop语言中的this并无区别。可以用this来访问翠香本身的属性和方法。
 
-{% highlight javascript %}
+````javascript
 var obj = { 
    number: 42, 
    getNumber: function () { 
      return this.number; 
    } 
  }; 
-{% endhighlight %}
+````
 
 var number = obj.getNumber(); 
 
@@ -107,7 +109,7 @@ var number = obj.getNumber();
 
 当使用new关键字来调用构造函数的时候，this指向的是所创建的对象。
 
-{% highlight javascript %}
+````javascript
 function Object(number) { 
   this.number = number; 
   this.getNumber = function () { 
@@ -116,7 +118,7 @@ function Object(number) {
 } 
 var obj = new Object(42); 
 var number = obj.getNumber(); 
-{% endhighlight %}
+````
   
 注意getNumber函数中的this和Object构造函数中的this是不同的。 我们是通过new关键字来执行Object构造函数的，所以此时this代表正在被创建的新对象。 而另一方面，我是通过obj对象来调用getNumber函数的，所以函数被执行时，this代表obj对象。
 
@@ -124,12 +126,12 @@ var number = obj.getNumber();
 
 如果不牵扯对象，只是调用一个普通函数，此时this代表什么？
 
-{% highlight javascript %}
+````javascript
 function test_this() { 
   return this; 
 } 
 var i_wonder_what_this_is = test_this(); 
-{% endhighlight %}
+````
 
 此时this默认指向最外层的全局对象；对网页来说指向的是window对象。
 
@@ -139,7 +141,7 @@ var i_wonder_what_this_is = test_this();
 
 这个问题比较复杂。
 
-{% highlight javascript %}
+````javascript
 <script type="text/javascript"> 
   function click_handler() { 
     alert(this); // alerts the window object 
@@ -147,13 +149,13 @@ var i_wonder_what_this_is = test_this();
 </script> 
  ... 
 <button id='thebutton' onclick='click_handler()'>Click me!</button>
-{% endhighlight %}
+````
 
 如果用上面这种写法，this指向的是全局的window对象。
 
 如果事件处理器是通过JavaScript添加的，那么this指向的是产生事件的那个DOM元素。
 
-{% highlight javascript %}
+````javascript
 <script type="text/javascript"> 
   function click_handler() { 
     alert(this); // alerts the button DOM node 
@@ -167,11 +169,11 @@ var i_wonder_what_this_is = test_this();
 </script> 
  ... 
 <button id='thebutton'>Click me!</button>
-{% endhighlight %}
+````
 
 如果把上面例子改成下面这样：
 
-{% highlight javascript %}
+````javascript
 <script type="text/javascript"> 
   function Object(number) { 
     this.number = number; 
@@ -189,7 +191,7 @@ var i_wonder_what_this_is = test_this();
   
   window.onload = addhandler; 
 </script>
-{% endhighlight %}
+````
 
 如果运行上面这段代码，我们得到的不是42，而是"undefined".
 
@@ -203,7 +205,7 @@ setTimeout函数也有相同的效果，不但延迟一个函数的执行，同�
 
 当执行一个函数调用时，apply和call能够让我们手动地覆盖this的默认值。
 
-{% highlight javascript %}
+````javascript
 <script type="text/javascript"> 
   var first_object = { 
     num: 42 
@@ -219,31 +221,31 @@ setTimeout函数也有相同的效果，不但延迟一个函数的执行，同�
   multiply.call(first_object, 5); // returns 42 * 5 
   multiply.call(second_object, 5); // returns 24 * 5 
 </script>
-{% endhighlight %}
+````
 
 call的第一个参数指定了在函数执行时this代表的是什么。(有些语言中this会作为隐含参数传递给函数，这里相当于将this参数显式地写出来了。)
 
 apply与call的工作原理相同，只不过允许我们将参数放在一个数组中。
 
-{% highlight javascript %}
+````javascript
 <script type="text/javascript"> 
  ... 
   
   multiply.apply(first_object, [5]); // returns 42 * 5 
   multiply.apply(second_object, [5]); // returns 24 * 5 
 </script>
-{% endhighlight %}
+````
 
 现在你也许会认为下面这段代码能解决之前遇到的执行上下文转换问题。
 
-{% highlight javascript %}
+````javascript
 function addhandler() { 
   var obj = new Object(42), 
   the_button = document.getElementById('thebutton'); 
   
   the_button.onclick = obj.getNumber.call(deep_thought); 
 }
-{% endhighlight %}
+````
 
 这段代码问题明显，我们没有将getNumber传递给the_button，而是立即执行了这个函数，将结果赋给了onclick。
 下面介绍真正的解决方案。
@@ -254,7 +256,7 @@ function addhandler() {
 
 下面通过代码演示bind的工作原理。
 
-{% highlight javascript %}
+````javascript
 <script type="text/javascript"> 
   var first_object = { 
     num: 42 
@@ -282,7 +284,7 @@ function addhandler() {
   var second_multiply = multiply.bind(second_object); 
   second_multiply(5); // returns 24 * 5 
 </script>
-{% endhighlight %}
+````
 
 Function.prototype.bind使得所有函数都具有了bind这个方法。
 当multiply.bind被调用时，JavaScript为bind方法创建一个执行上下文，并将this设置为multiply函数。
@@ -295,11 +297,11 @@ method变量记录了bind执行时this的值，而在下一行创建的匿名函
 
 现在，我们可以用下面的方式解决之前的问题了。
 
-{% highlight javascript %}
+````javascript
 function addhandler() { 
   var obj = new Object(42), 
   the_button = document.getElementById('thebutton'); 
   
   the_button.onclick = obj.getNumber.bind(obj); 
 }
-{% endhighlight %}
+````
